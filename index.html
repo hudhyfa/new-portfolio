@@ -316,17 +316,17 @@
                                     <div class="row">
                                         <div class="col-lg-4 col-md-6">
                                             <div class="form-box user-icon mb-25">
-                                                <input type="text" name="Name" placeholder="Your name">
+                                                <input type="text" name="Name" placeholder="Your name" id="formname">
                                             </div>
                                         </div>
                                         <div class="col-lg-4 col-md-6">
                                             <div class="form-box email-icon mb-25">
-                                                <input type="text" name="email" placeholder="Email">
+                                                <input type="text" name="email" placeholder="Email" id="email">
                                             </div>
                                         </div>
                                         <div class="col-lg-4 col-md-6">
                                             <div class="form-box email-icon mb-25">
-                                                <input type="text" name="subject" placeholder="Subject">
+                                                <input type="text" name="subject" placeholder="Subject" id="subject">
                                             </div>
                                         </div>
                                         <div class="col-lg-12">
@@ -334,7 +334,7 @@
                                                 <textarea name="message" id="message" placeholder="Message"></textarea>
                                             </div>
                                             <div class="submit-info">
-                                                <button class="submit-btn2" type="submit">Send Message</button>
+                                                <button class="submit-btn2" type="submit" onclick="validateForm()">Send Message</button>
                                             </div>
                                         </div>
                                     </div>
@@ -379,24 +379,72 @@
     </div>
     <!-- JS here -->
 
-    <!-- script for form -->
+    <!-- script for form and form validation-->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_7bzWu5MPPK23AVqmah8uZoo5arSidfZNK-nMg1x_AJaUIIGHLKIpeMhpOGmDwZccxQ/exec'
-        const form = document.forms['submit-to-google-sheet']
-        const msg = document.getElementById("msg")
-      
-        form.addEventListener('submit', e => {
-          e.preventDefault()
-          fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                msg.innerHTML = "Message sent"
-                setTimeout(()=>{
-                    msg.innerHTML = " "
-                },3000)
+
+   
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbx_7bzWu5MPPK23AVqmah8uZoo5arSidfZNK-nMg1x_AJaUIIGHLKIpeMhpOGmDwZccxQ/exec'
+            const form = document.forms['submit-to-google-sheet']
+            const msg = document.getElementById("msg")
+          
+            form.addEventListener('submit', e => {
+              e.preventDefault()
+              if(validateForm()){
+                  fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                    .then(response => {
+                        msg.innerHTML = "Message sent"
+                        setTimeout(()=>{
+                            msg.innerHTML = " "
+                        },3000)
+                    })
+                    .catch(error => console.error('Error!', error.message))
+              }else{
+                alert('validation failed');
+              }
+
             })
-            .catch(error => console.error('Error!', error.message))
-        })
-      </script>
+        
+
+
+        
+        function validateForm() {
+            var name = document.getElementById("formname").value;
+            var email = document.getElementById("email").value;
+            var message = document.getElementById("message").value;
+            var subject = document.getElementById("subject").value;
+
+            // Regular expression pattern for a more comprehensive email validation
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (name === "") {
+                alert("Name must be filled out");
+                return false;
+            }
+            if (email === "") {
+                alert("Email must be filled out");
+                return false;
+            }
+            if (!email.match(emailPattern)) {
+                alert("Invalid email address");
+                return false;
+            }
+            if (subject === "") {
+                alert("subject must be filled out");
+                return false;
+            }
+            if (message === "") {
+                alert("message must be filled out");
+                return false;
+            }
+            
+            // Additional validation logic can be added here
+
+            // return formsheet();
+
+            return true;
+        }
+
+    </script>
 
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->
